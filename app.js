@@ -20,8 +20,7 @@ const cors=require('cors')
 const bodyParser=require('body-parser')
 const app =express()
 const mongoose=require('mongoose')
-const bcrypt=require('bcryptjs')
-let authModel=require('./authSchema')
+const mainRouter = require('./Routes/mainRoute')
 
 
 
@@ -43,6 +42,7 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use(bodyParser.json())
+app.use(mainRouter)
 
 
 app.get('/',(req,res)=>{
@@ -51,45 +51,13 @@ app.get('/',(req,res)=>{
 })
 
 
-app.post('/signup', async(req,res)=>{
- 
-
-    let checkUser= await authModel.findOne({email:req.body.email})
-   if(checkUser){
-       res.send({
-           Response:checkUser,
-           Messgae:"Email Already in use"
-       })
-   }
-   else{
-        let hashPass= await bcrypt.hash(req.body.password,12)
-        let userCreate = new authModel({
-            email:req.body.email,
-            password:hashPass
-        })
-        userCreate.save().then(()=>{
-            res.send("User Created Successfully!")
-        }).catch(()=>{
-            res.send("Some Thing Went Wrong!")
-        })
-   }
 
 
-//    let userCreate= new authModel({
-//        email:req.body.email,
-//        password:req.body.password 
-//    })
-//    userCreate.save().then((responce)=>{
-   
-//        res.status(200).send({message:"Data Added Successfully",responce:responce})
-     
-//    })
-//    .catch((err)=>{
-//        console.log("Error=>"+err)
 
-//    })
 
-})
+
+
+
 
 let port = process.env.PORT||4000
 
